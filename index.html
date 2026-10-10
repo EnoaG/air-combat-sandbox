@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MISSION RESULTS // AIR COMBAT SANDBOX</title>
+    <script type="module" crossorigin src="./assets/index-Bnw4gLQh.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-C0y2vtDX.css">
+  </head>
+  <body>
+    <div id="app" data-workspace="manager">
+      <div id="scene"></div>
+      <div class="scanlines"></div>
+      <header class="title">| MISSION RESULTS |</header>
+      <section class="status-panel" aria-live="polite">
+        <div class="eyebrow">TURN STATUS</div>
+        <div id="turn-title" class="turn-title">TURN 01</div>
+        <div id="turn-summary" class="muted">FORMATION / INITIAL CONTACT</div>
+        <div class="rule"></div>
+        <div class="stat-row"><span>UNITS</span><strong id="unit-count">06</strong></div>
+        <div class="stat-row"><span>MODE</span><strong id="mode-readout">VIEW</strong></div>
+        <div class="stat-row"><span>RANGE BASIS</span><strong id="range-mode-readout">SLANT</strong></div>
+        <div class="stat-row"><span>CAMERA</span><strong id="camera-readout">FREE 3D / 1档</strong></div>
+      </section>
+      <button id="player-viewer-open" class="player-viewer-open">玩家查看器</button>
+      <button id="player-viewer-exit" class="player-viewer-open" hidden>返回编辑器</button>
+      <button id="manager-open" class="manager-open">MANAGER / 管理器</button>
+      <section id="workflow-panel" class="workflow-panel" aria-label="工作区模式">
+        <div id="workflow-state" role="status">制作场景</div>
+        <div class="edit-actions">
+          <button id="workflow-begin">新建下一回合草稿</button>
+          <button id="workflow-advance">按航路生成草稿位置</button>
+          <button id="workflow-commit">确认提交回合…</button>
+          <button id="workflow-discard">丢弃草稿…</button>
+          <button id="map-editor-save" hidden>保存地图新修订</button>
+          <button id="task-editor-save" hidden>保存任务新修订</button>
+          <button id="workflow-reopen" hidden>取消最近回合提交…</button>
+          <button id="workflow-save-draft" hidden>保存草稿到本地</button>
+          <button id="workflow-snapshot" hidden>生成回合快照</button>
+        </div>
+        <div id="editor-save-as-controls" hidden>
+          <label class="edit-row"><span>副本名称</span><input id="editor-save-as-name" maxlength="128" /></label>
+          <div class="edit-actions"><button id="map-editor-save-as" hidden>另存为新地图</button><button id="task-editor-save-as" hidden>另存为新任务</button></div>
+        </div>
+        <div id="workflow-confirm" hidden>
+          <p id="workflow-confirm-text"></p>
+          <button id="workflow-confirm-yes">确认</button><button id="workflow-confirm-cancel">取消</button>
+        </div>
+      </section>
+      <section id="manager-panel" class="manager-panel" aria-label="工程管理器">
+        <header><div><strong>AIR COMBAT / 工程管理器</strong></div><button id="manager-close">进入当前地图工作区 →</button></header>
+        <nav class="manager-tabs"><button data-manager-tab="home">首页／最近项目</button><button data-manager-tab="players">玩家资料库</button><button data-manager-tab="aircraft">机体库</button><button data-manager-tab="sp">武器／SP库</button><button data-manager-tab="rules">规则与自定义</button><button data-manager-tab="maps">地图库</button><button data-manager-tab="tasks">任务库</button><button data-manager-tab="sessions">推演管理</button><button data-manager-tab="snapshots">快照仓库</button></nav>
+        <div id="manager-content"></div><div id="manager-status" role="status"></div>
+      </section>
+      <details class="archive-panel" id="archive-panel">
+        <summary>PROJECT / 项目存档</summary>
+        <label class="edit-row"><span>名称</span><input id="archive-name" value="Working sandbox" maxlength="128" /></label>
+        <div class="edit-actions"><button id="archive-save">保存</button><button id="archive-save-as">另存为</button><button id="archive-export">导出 JSON</button></div>
+        <label class="edit-row"><span>本地存档</span><select id="archive-list"><option value="">选择存档</option></select></label>
+        <div class="edit-actions"><button id="archive-load">读取</button><button id="archive-import">导入 JSON</button><button id="archive-refresh">刷新列表</button></div>
+        <input id="archive-file" type="file" accept=".json,application/json" hidden />
+        <label class="check-row"><input id="archive-auto" type="checkbox" checked /> 自动保存</label>
+        <div id="archive-status" class="edit-hint" role="status">正在连接本地存档库…</div>
+      </details>
+      <section class="range-panel">
+        <div class="eyebrow">RANGE CHECK / 距离判定</div>
+        <div class="edit-row"><span>ATTACKER</span><button id="range-pick-attacker">点选攻击方</button></div>
+        <div id="range-attacker-name" class="range-unit">尚未选择</div>
+        <div class="edit-row"><span>TARGET</span><button id="range-pick-target">点选目标</button></div>
+        <div id="range-target-name" class="range-unit">尚未选择</div>
+        <div id="range-pick-state" class="muted" role="status"></div>
+        <div id="range-candidates" class="range-candidates" hidden></div>
+        <div class="edit-actions"><button id="range-use-selected">选中单位作攻击方</button><button id="range-clear">清空</button></div>
+        <label class="check-row"><input type="checkbox" id="range-rings" checked /> 同高距离截面环</label>
+        <label class="edit-row"><span>填充距离段</span><select id="range-fill-band"><option value="WVR">WVR · 2 km</option><option value="MR">MR · 5 km</option><option value="BVR">BVR · 10 km</option><option value="SOW">SOW · 18 km</option></select></label>
+        <label class="check-row"><input type="checkbox" id="range-fill" /> 显示选定距离的3D填充球体</label>
+        <label class="edit-row"><span>填充透明度</span><input id="range-fill-opacity" type="number" min="0.02" max="0.6" step="0.02" value="0.12" /></label>
+        <div id="range-result" class="event-log" role="status">SELECT ATTACKER AND TARGET</div>
+        <div class="muted range-key">GRID 1 km · WVR 2 · MR 5 · BVR 10 · SOW 18</div>
+      </section>
+      <section class="trail-panel">
+        <label class="edit-row"><span>TRAIL DISPLAY</span><select id="trail-display"><option value="all">ALL / 全部</option><option value="recent">RECENT / 最近回合</option><option value="none">NONE / 隐藏</option></select></label>
+        <label class="edit-row"><span>PREVIOUS TURNS</span><input id="trail-turns" type="number" min="1" max="999" value="3" /></label>
+      </section>
+      <section class="edit-panel" id="edit-panel" hidden>
+        <div class="edit-actions">
+          <button id="tab-units" aria-pressed="true">UNITS / TURNS</button>
+          <button id="tab-terrain" aria-pressed="false">TERRAIN (T)</button>
+        </div>
+        <div id="terrain-editor" hidden>
+          <div class="eyebrow">HEIGHT FIELD EDIT</div>
+          <label class="edit-row"><span>画布宽 km</span><input id="canvas-width" type="number" min="1" max="500" step="1" value="60" /></label>
+          <label class="edit-row"><span>画布高 km</span><input id="canvas-height" type="number" min="1" max="500" step="1" value="60" /></label>
+          <label class="edit-row"><span>采样点数</span><input id="canvas-samples" type="number" min="33" max="511" step="1" value="257" /></label>
+          <div class="edit-actions"><button id="canvas-resize">调整画布尺寸</button></div>
+          <label class="edit-row"><span>BRUSH</span><select id="terrain-brush"><option value="raise">RAISE</option><option value="lower">LOWER</option><option value="smooth">SMOOTH</option><option value="flatten">FLATTEN</option><option value="urban">URBAN / 城区</option><option value="erase-urban">ERASE URBAN / 擦除城区</option></select></label>
+          <label class="edit-row"><span>RADIUS</span><input id="terrain-radius" type="number" min="8" max="240" value="50" /></label>
+          <label class="edit-row"><span>STRENGTH</span><input id="terrain-strength" type="number" min="0.1" max="30" step="0.1" value="6" /></label>
+          <label class="edit-row"><span>FLAT HEIGHT</span><input id="terrain-flat" type="number" min="0" max="180" value="20" /></label>
+          <label class="edit-row"><span>CITY DENSITY %</span><input id="urban-density" type="number" min="1" max="100" value="70" /></label>
+          <label class="edit-row"><span>CITY ANGLE °</span><input id="urban-angle" type="number" min="-180" max="180" value="0" /></label>
+          <label class="edit-row"><span>CITY SEED</span><input id="urban-seed" type="number" step="1" value="42" /></label>
+          <label class="edit-row"><span>SMOOTH CONTOURS</span><input id="terrain-contour-smooth" type="checkbox" /></label>
+          <label class="edit-row"><span>TERRAIN TYPE</span><select id="terrain-preset"><option value="islands">ISLANDS / 岛屿</option><option value="plains">PLAINS / 平原</option><option value="hills">HILLS / 丘陵</option><option value="canyon">CANYON / 峡谷</option><option value="coast">COAST / 沿海</option></select></label>
+          <label class="edit-row"><span>SEED</span><input id="terrain-seed" type="number" step="1" value="42" /></label>
+          <div class="edit-actions"><button id="terrain-generate">GENERATE TERRAIN</button><button id="terrain-reset">RESET TERRAIN</button></div>
+          <div class="edit-actions"><button id="terrain-undo">UNDO</button><button id="terrain-redo">REDO</button></div>
+          <div id="terrain-state" class="edit-hint" role="status">257 x 257 HEIGHT FIELD</div>
+        </div>
+        <div id="unit-editor">
+        <div class="eyebrow">TURN EDIT</div>
+        <div class="edit-actions">
+          <button id="turn-add">+ TURN</button>
+          <button id="turn-copy">COPY TURN</button>
+          <button id="turn-delete">DELETE TURN</button>
+        </div>
+        <label class="edit-row"><span>SUMMARY</span><input id="turn-summary-edit" type="text" /></label>
+        <label class="edit-row"><span>APPLY TO LATER</span><input id="apply-later" type="checkbox" /></label>
+        <div class="rule"></div>
+        <div class="eyebrow">SCENARIO EDIT</div>
+        <div class="edit-actions">
+          <button id="edit-add">+ UNIT</button>
+          <button id="edit-delete">DELETE</button>
+          <button id="edit-undo">UNDO</button>
+          <button id="edit-redo">REDO</button>
+        </div>
+        <div class="edit-actions">
+          <button id="edit-copy">DUPLICATE</button>
+          <button id="tool-box" aria-pressed="false">BOX SELECT (B)</button>
+          <button id="select-clear">CLEAR</button>
+        </div>
+        <label class="edit-row"><span>COUNT</span><input id="create-count" type="number" min="1" max="100" step="1" value="1" /></label>
+        <label class="edit-row"><span>SPACING</span><input id="create-spacing" type="number" min="1" max="1000" step="1" value="20" /></label>
+        <label class="edit-row"><span>ADD TO SELECTION</span><input id="select-additive" type="checkbox" /></label>
+        <div id="selection-count" class="edit-hint">SELECTED 0</div>
+        <div id="unit-picker" class="unit-picker" aria-label="Unit selection"></div>
+        <div class="rule"></div>
+        <details id="route-section" open>
+          <summary class="eyebrow">WAYPOINTS / TRACK</summary>
+          <label class="edit-row"><span>ACTIVE ROUTE</span><select id="route-select"></select></label>
+          <label class="edit-row"><span>ROUTE NAME</span><input id="route-name" type="text" value="ROUTE 1" /></label>
+          <div class="edit-actions"><button id="route-new">+ ROUTE</button><button id="route-remove">DELETE ROUTE</button></div>
+          <div class="edit-actions"><button id="route-pick">+ MAP WAYPOINT</button><button id="route-bind">BIND SELECTED</button><button id="route-unbind">UNBIND</button></div>
+          <label class="edit-row"><span>WP HEIGHT</span><input id="route-height" type="number" min="0" max="1000" value="80" /></label>
+          <div id="route-list" class="unit-picker"></div>
+          <div class="edit-actions"><button id="route-up">WP UP</button><button id="route-down">WP DOWN</button><button id="path-delete">DELETE POINT</button></div>
+          <div class="edit-actions"><button id="track-edit" aria-pressed="false">EDIT TRACK</button><button id="track-add">+ TRACK POINT</button><button id="track-midpoint">+ MIDPOINT</button></div>
+          <label class="edit-row"><span>SEGMENT FROM TURN</span><input id="track-segment" type="number" min="1" value="1" /></label>
+          <div id="track-list" class="unit-picker"></div>
+          <div class="transform-grid">
+            <label class="axis-x">POINT X<input id="path-x" type="number" step="0.1" /></label>
+            <label class="axis-y">POINT Z<input id="path-y" type="number" step="0.1" /></label>
+            <label class="axis-z">POINT Y<input id="path-z" type="number" step="0.1" /></label>
+          </div>
+          <div id="path-state" class="edit-hint" role="status">NO ROUTE</div>
+        </details>
+        <div class="rule"></div>
+        <label class="edit-row"><span>LABEL</span><input id="edit-label" type="text" /></label>
+        <label class="edit-row"><span>KIND</span><input id="edit-kind" type="text" /></label>
+        <label class="edit-row"><span>FACTION</span>
+          <select id="edit-faction">
+            <option value="squadron">SQUADRON</option>
+            <option value="friendly">FRIENDLY</option>
+            <option value="neutral">NEUTRAL</option>
+            <option value="enemy">ENEMY</option>
+          </select>
+        </label>
+        <label class="edit-row"><span>ICON</span>
+          <select id="edit-icon">
+            <option value="air-filled">AIR FILLED</option>
+            <option value="air-outline">AIR OUTLINE</option>
+            <option value="ground">GROUND</option>
+            <option value="ship">SHIP</option>
+          </select>
+        </label>
+        <label class="edit-row"><span>TGT</span><input id="edit-tgt" type="checkbox" /></label>
+        <label class="edit-row"><span>护卫目标</span><input id="edit-escort" type="checkbox" aria-label="护卫目标标记" /></label>
+        <label class="edit-row"><span>隐藏</span><input id="edit-hidden" type="checkbox" /></label>
+        <label class="edit-row"><span>无实体</span><input id="edit-intangible" type="checkbox" /></label>
+        <label class="edit-row"><span>LOST AT</span><input id="edit-lost" type="number" min="1" max="99" /></label>
+        <div class="edit-actions" id="placement-actions" hidden>
+          <button id="edit-place">PICK POSITION</button><button id="edit-cancel">CANCEL</button>
+        </div>
+        <div class="rule"></div>
+        <div class="edit-actions">
+          <button id="tool-move" aria-pressed="true">MOVE (W)</button>
+          <button id="tool-rotate" aria-pressed="false">ROTATE (Q)</button>
+        </div>
+        <div class="transform-grid">
+          <label class="axis-x">X<input id="edit-x" type="number" step="0.1" /></label>
+          <label class="axis-z">Y<input id="edit-z" type="number" step="0.1" /></label>
+          <label class="axis-y">Z<input id="edit-y" type="number" step="0.1" /></label>
+        </div>
+        <div class="transform-grid">
+          <label class="axis-x">PITCH X°<input id="edit-pitch" type="number" step="0.1" /></label>
+          <label class="axis-y">YAW Z°<input id="edit-yaw" type="number" step="0.1" /></label>
+          <label class="axis-z">ROLL Y°<input id="edit-roll" type="number" step="0.1" /></label>
+        </div>
+        <label class="edit-row"><span>Z／高度 m</span><input id="edit-height" type="number" step="1" aria-label="单位高度（米）" /></label>
+        <div class="edit-actions"><button id="edit-auto">AUTO ATTITUDE</button></div>
+        <label class="edit-row"><span>MOVE SNAP</span><input id="move-snap" type="number" min="0" step="0.1" value="0" /></label>
+        <label class="edit-row"><span>ROTATE SNAP °</span><input id="rotate-snap" type="number" min="0" step="1" value="0" /></label>
+        <div id="edit-state" class="edit-hint" role="status">NONE</div>
+        </div>
+      </section>
+      <section class="selection-panel" aria-live="polite">
+        <div class="eyebrow">SELECTED UNIT</div>
+        <div id="selected-name" class="turn-title">NONE</div>
+        <div id="selected-detail" class="muted"></div>
+        <div class="rule"></div>
+        <div id="distance-readout" class="distance">—</div>
+        <div id="attitude-readout" class="attitude">—</div>
+      </section>
+      <section class="event-panel" aria-live="polite">
+        <div class="eyebrow">TURN EVENTS</div>
+        <div id="event-list" class="event-log">NO CONTACT</div>
+      </section>
+      <nav class="turn-controls" aria-label="回合控制">
+        <button id="prev-turn" title="上一回合">◀</button>
+        <span id="turn-indicator">01 / 05</span>
+        <button id="next-turn" title="下一回合">▶</button>
+      </nav>
+    </div>
+  </body>
+</html>
