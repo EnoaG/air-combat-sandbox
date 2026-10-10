@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MISSION RESULTS // AIR COMBAT SANDBOX</title>
-    <script type="module" crossorigin src="./assets/index-BJ0ir9Yt.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CovKSoCO.css">
+    <script type="module" crossorigin src="./assets/index-D8w1ofTw.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BvXG4RuW.css">
   </head>
   <body>
     <div id="app" data-workspace="manager">
@@ -72,14 +72,16 @@
         <label class="edit-row"><span>目标列表</span><select id="range-target-select" aria-label="目标列表"><option value="">选择目标</option></select></label>
         <div id="range-pick-state" class="muted" role="status"></div>
         <div id="range-candidates" class="range-candidates" hidden></div>
-        <div class="edit-actions"><button id="range-use-selected">选中单位作攻击方</button><button id="range-clear">清空</button></div>
+        <div class="edit-actions"><button id="range-use-selected">选中单位作攻击方</button><button id="range-clear">清空全部范围</button></div>
         <label class="check-row"><input type="checkbox" id="range-rings" checked /> 同高距离截面环</label>
         <label class="edit-row"><span>填充距离段</span><select id="range-fill-band"><option value="WVR">WVR · 2 km</option><option value="MR">MR · 5 km</option><option value="BVR">BVR · 10 km</option><option value="SOW">SOW · 18 km</option></select></label>
         <label class="check-row"><input type="checkbox" id="range-fill" /> 显示选定距离的3D填充球体</label>
         <label class="edit-row"><span>填充透明度</span><input id="range-fill-opacity" type="number" min="0.02" max="0.6" step="0.02" value="0.12" /></label>
         <div id="range-result" class="event-log" role="status">SELECT ATTACKER AND TARGET</div>
         <div class="muted range-key">GRID 1 km · WVR 2 · MR 5 · BVR 10 · SOW 18</div>
-        <div class="muted">范围常驻：退出点选、切换菜单后保留；关闭显示开关或点击“清空”移除。</div>
+        <div class="muted">多单位范围：依次选择攻击方会叠加保留。上方开关、距离段和透明度仅调整当前攻击方。</div>
+        <div id="range-layer-count" class="range-key" role="status">常驻范围：0 个单位</div>
+        <div id="range-layer-list" class="range-layer-list" aria-label="常驻单位范围列表"></div>
       </section>
       <section class="trail-panel">
         <label class="edit-row"><span>TRAIL DISPLAY</span><select id="trail-display"><option value="all">ALL / 全部</option><option value="recent">RECENT / 最近回合</option><option value="none">NONE / 隐藏</option></select></label>
