@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MISSION RESULTS // AIR COMBAT SANDBOX</title>
-    <script type="module" crossorigin src="./assets/index-DLoipID1.js"></script>
+    <script type="module" crossorigin src="./assets/index-DHy6WQMX.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CdbYN4hl.css">
   </head>
   <body>
@@ -108,10 +108,12 @@
           <label class="edit-row"><span>建筑预设</span><select id="urban-preset"></select></label>
           <details id="urban-style-details">
             <summary>建筑生成参数</summary>
+            <div class="eyebrow">建筑参数只作用于之后笔刷新画的区域</div>
+            <div class="eyebrow">街间距／街区格数／空街区是全图街网，需按下方按钮生效</div>
             <div id="urban-style-rows"></div>
             <div class="eyebrow" id="urban-style-count"></div>
           </details>
-          <div class="edit-actions"><button id="urban-style-reset">恢复默认参数</button></div>
+          <div class="edit-actions"><button id="urban-style-reset">恢复默认参数</button><button id="urban-style-apply-all">应用到全部已画区域</button></div>
           <label class="edit-row"><span>平滑等高线</span><input id="terrain-contour-smooth" type="checkbox" /></label>
           <label class="edit-row"><span>地形类型</span><select id="terrain-preset"><option value="islands">岛屿</option><option value="plains">平原</option><option value="hills">丘陵</option><option value="mountains">山脉</option><option value="canyon">峡谷</option><option value="coast">沿海</option></select></label>
           <label class="edit-row"><span>随机种子</span><input id="terrain-seed" type="number" step="1" value="42" /></label>
