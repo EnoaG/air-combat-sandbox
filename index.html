@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MISSION RESULTS // AIR COMBAT SANDBOX</title>
-    <script type="module" crossorigin src="./assets/index-CEyrZeKv.js"></script>
+    <script type="module" crossorigin src="./assets/index-DLoipID1.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CdbYN4hl.css">
   </head>
   <body>
@@ -105,6 +105,13 @@
           <label class="edit-row"><span>城区密度 %</span><input id="urban-density" type="number" min="1" max="100" value="70" /></label>
           <label class="edit-row"><span>城区角度 °</span><input id="urban-angle" type="number" min="-180" max="180" value="0" /></label>
           <label class="edit-row"><span>城区种子</span><input id="urban-seed" type="number" step="1" value="42" /></label>
+          <label class="edit-row"><span>建筑预设</span><select id="urban-preset"></select></label>
+          <details id="urban-style-details">
+            <summary>建筑生成参数</summary>
+            <div id="urban-style-rows"></div>
+            <div class="eyebrow" id="urban-style-count"></div>
+          </details>
+          <div class="edit-actions"><button id="urban-style-reset">恢复默认参数</button></div>
           <label class="edit-row"><span>平滑等高线</span><input id="terrain-contour-smooth" type="checkbox" /></label>
           <label class="edit-row"><span>地形类型</span><select id="terrain-preset"><option value="islands">岛屿</option><option value="plains">平原</option><option value="hills">丘陵</option><option value="mountains">山脉</option><option value="canyon">峡谷</option><option value="coast">沿海</option></select></label>
           <label class="edit-row"><span>随机种子</span><input id="terrain-seed" type="number" step="1" value="42" /></label>
