@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MISSION RESULTS // AIR COMBAT SANDBOX</title>
-    <script type="module" crossorigin src="./assets/index-ymN2UlU5.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DCKNpYYU.css">
+    <script type="module" crossorigin src="./assets/index-Bf4szE4G.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CPdq1z9q.css">
   </head>
   <body>
     <div id="app" data-workspace="manager">
@@ -86,6 +86,10 @@
       <section class="trail-panel">
         <label class="edit-row"><span>航迹显示</span><select id="trail-display"><option value="all">全部</option><option value="recent">最近回合</option><option value="none">隐藏</option></select></label>
         <label class="edit-row"><span>回溯回合数</span><input id="trail-turns" type="number" min="1" max="999" value="3" /></label>
+        <div class="edit-row"><span>单位标签</span><span class="label-toggles" title="两个都勾选时呼号在上、机型在下；都不勾选则只留图标">
+          <label><input id="label-show-callsign" type="checkbox" checked /> 呼号</label>
+          <label><input id="label-show-kind" type="checkbox" /> 机型</label>
+        </span></div>
       </section>
       <section class="edit-panel" id="edit-panel" hidden>
         <div class="edit-actions">
@@ -172,6 +176,15 @@
         <div class="rule"></div>
         <label class="edit-row"><span>呼号</span><input id="edit-label" type="text" /></label>
         <label class="edit-row"><span>机型</span><input id="edit-kind" type="text" /></label>
+        <label class="edit-row"><span>标签显示</span>
+          <select id="edit-label-mode">
+            <option value="">跟随全局</option>
+            <option value="callsign">只呼号</option>
+            <option value="kind">只机型</option>
+            <option value="both">呼号+机型</option>
+            <option value="none">不显示</option>
+          </select>
+        </label>
         <label class="edit-row"><span>阵营</span>
           <select id="edit-faction">
             <option value="squadron">中队</option>
